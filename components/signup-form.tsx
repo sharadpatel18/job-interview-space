@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { createUser } from "@/services/authService";
+import { signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -111,7 +112,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             <FieldGroup>
               <Field>
                 <Button type="submit">Create Account</Button>
-                <Button variant="outline" type="button">
+                <Button variant="outline" type="button" onClick={() => signIn("google", { callbackUrl: "/" })}>
                   Sign up with Google
                 </Button>
                 <FieldDescription className="px-6 text-center">
