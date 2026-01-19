@@ -16,7 +16,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
 import { toast } from "sonner"
 
@@ -24,10 +24,19 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, [])
+
+  if (!isMounted) {
+    return null;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
@@ -89,7 +98,7 @@ export function LoginForm({
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
+                <Button variant="outline" type="button" onClick={() => signIn("google", { callbackUrl: "/" })}>
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
