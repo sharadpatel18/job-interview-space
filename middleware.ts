@@ -4,7 +4,10 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
+  const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+  if (!nextAuthSecret) {
+    throw new Error("Missing NEXTAUTH_SECRET");
+  }
   // Allow public routes
   if (
     pathname.startsWith("/login") ||
@@ -17,15 +20,15 @@ export async function middleware(request: NextRequest) {
   // Get session token
   const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: nextAuthSecret,
   });
 
   // If NOT authenticated → redirect to /login
   if (!token) {
     const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname + request.nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
-
   return NextResponse.next();
 }
 
